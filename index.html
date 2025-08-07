@@ -1,7 +1,72 @@
 <!DOCTYPE html>
 <html>
+<head>
+	<meta charset="UTF-8">
+	<title>Rays</title>
+	<style>
+		body {
+			margin: 0;
+			background-color: #000;
+		}
+		canvas {
+            width: 100%;
+            height: 100%;
+		}
+	</style>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+	<canvas id="canvas"></canvas>
+	<script>
+		const canvas = document.getElementById('canvas');
+		const ctx = canvas.getContext('2d');
+
+		const NUM_RAYS = 6;
+		const RAY_WIDTH = 5;
+		const RAY_GLOW = 10;
+
+		function drawRays(width, height) {
+			const points = calculateRayPoints(width, height);
+			ctx.clearRect(0, 0, width, height);
+
+			for (let i = 0; i < NUM_RAYS; i++) {
+				ctx.beginPath();
+				ctx.moveTo(points[2 * i].x, points[2 * i].y);
+				ctx.lineTo(points[2 * i + 1].x, points[2 * i + 1].y);
+				ctx.lineWidth = RAY_WIDTH;
+				ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+				ctx.stroke();
+			}
+		}
+
+        function calculateRayPoints(width, height) {
+            const points = [];
+            for (let i = 0; i < NUM_RAYS; i++) {
+                const angle = (i / (NUM_RAYS - 1)) * (Math.PI / 2);
+                const x1 = width - Math.cos(angle) * 32;
+                const y1 = Math.sin(angle) * 32;
+                const length = Math.sqrt(width*width + height*height);
+                const x2 = x1 - Math.cos(angle) * length;
+                const y2 = y1 + Math.sin(angle) * length;
+                points.push({ x: x1, y: y1 }, { x: x2, y: y2 });
+            }
+            return points;
+        }
+       
+
+        function handleResize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        drawRays(canvas.width, canvas.height);
+        }
+
+		function main() {
+			window.addEventListener('resize', handleResize);
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drawRays(canvas.width, canvas.height);
+		}
+
+		main();
+	</script>
 </body>
 </html>
